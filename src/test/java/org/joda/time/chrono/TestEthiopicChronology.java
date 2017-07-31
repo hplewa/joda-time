@@ -408,7 +408,7 @@ public class TestEthiopicChronology extends TestCase {
          * My test for the issue I am working on.
          *
          */
-        assertEquals("Sane 02, 1996", dt.toString(DateTimeFormat.forPattern("MMM dd, yyyy")));
+        assertEquals("San 02, 1996", dt.toString(DateTimeFormat.forPattern("MMM dd, yyyy")));
         
         
         assertEquals(EthiopicChronology.EE, dt.getEra());

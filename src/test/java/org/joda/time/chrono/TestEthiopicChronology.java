@@ -30,6 +30,10 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.DurationField;
 import org.joda.time.DurationFieldType;
 import org.joda.time.DateTime.Property;
+import org.joda.time.format.DateTimeFormatter;
+//
+import org.joda.time.format.DateTimeFormat;
+//
 
 /**
  * This class is a Junit unit test for EthiopicChronology.
@@ -37,43 +41,43 @@ import org.joda.time.DateTime.Property;
  * @author Stephen Colebourne
  */
 public class TestEthiopicChronology extends TestCase {
-
+    
     private static final int MILLIS_PER_DAY = DateTimeConstants.MILLIS_PER_DAY;
-
+    
     private static long SKIP = 1 * MILLIS_PER_DAY;
-
+    
     private static final DateTimeZone PARIS = DateTimeZone.forID("Europe/Paris");
     private static final DateTimeZone LONDON = DateTimeZone.forID("Europe/London");
     private static final DateTimeZone TOKYO = DateTimeZone.forID("Asia/Tokyo");
     private static final Chronology ETHIOPIC_UTC = EthiopicChronology.getInstanceUTC();
     private static final Chronology JULIAN_UTC = JulianChronology.getInstanceUTC();
     private static final Chronology ISO_UTC = ISOChronology.getInstanceUTC();
-
-    long y2002days = 365 + 365 + 366 + 365 + 365 + 365 + 366 + 365 + 365 + 365 + 
-                     366 + 365 + 365 + 365 + 366 + 365 + 365 + 365 + 366 + 365 + 
-                     365 + 365 + 366 + 365 + 365 + 365 + 366 + 365 + 365 + 365 +
-                     366 + 365;
+    
+    long y2002days = 365 + 365 + 366 + 365 + 365 + 365 + 366 + 365 + 365 + 365 +
+    366 + 365 + 365 + 365 + 366 + 365 + 365 + 365 + 366 + 365 +
+    365 + 365 + 366 + 365 + 365 + 365 + 366 + 365 + 365 + 365 +
+    366 + 365;
     // 2002-06-09
     private long TEST_TIME_NOW =
-            (y2002days + 31L + 28L + 31L + 30L + 31L + 9L -1L) * MILLIS_PER_DAY;
-
+    (y2002days + 31L + 28L + 31L + 30L + 31L + 9L -1L) * MILLIS_PER_DAY;
+    
     private DateTimeZone originalDateTimeZone = null;
     private TimeZone originalTimeZone = null;
     private Locale originalLocale = null;
-
+    
     public static void main(String[] args) {
         junit.textui.TestRunner.run(suite());
     }
-
+    
     public static TestSuite suite() {
         SKIP = 1 * MILLIS_PER_DAY;
         return new TestSuite(TestEthiopicChronology.class);
     }
-
+    
     public TestEthiopicChronology(String name) {
         super(name);
     }
-
+    
     protected void setUp() throws Exception {
         DateTimeUtils.setCurrentMillisFixed(TEST_TIME_NOW);
         originalDateTimeZone = DateTimeZone.getDefault();
@@ -83,7 +87,7 @@ public class TestEthiopicChronology extends TestCase {
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/London"));
         Locale.setDefault(Locale.UK);
     }
-
+    
     protected void tearDown() throws Exception {
         DateTimeUtils.setCurrentMillisSystem();
         DateTimeZone.setDefault(originalDateTimeZone);
@@ -93,25 +97,25 @@ public class TestEthiopicChronology extends TestCase {
         originalTimeZone = null;
         originalLocale = null;
     }
-
+    
     //-----------------------------------------------------------------------
     public void testFactoryUTC() {
         assertEquals(DateTimeZone.UTC, EthiopicChronology.getInstanceUTC().getZone());
         assertSame(EthiopicChronology.class, EthiopicChronology.getInstanceUTC().getClass());
     }
-
+    
     public void testFactory() {
         assertEquals(LONDON, EthiopicChronology.getInstance().getZone());
         assertSame(EthiopicChronology.class, EthiopicChronology.getInstance().getClass());
     }
-
+    
     public void testFactory_Zone() {
         assertEquals(TOKYO, EthiopicChronology.getInstance(TOKYO).getZone());
         assertEquals(PARIS, EthiopicChronology.getInstance(PARIS).getZone());
         assertEquals(LONDON, EthiopicChronology.getInstance(null).getZone());
         assertSame(EthiopicChronology.class, EthiopicChronology.getInstance(TOKYO).getClass());
     }
-
+    
     //-----------------------------------------------------------------------
     public void testEquality() {
         assertSame(EthiopicChronology.getInstance(TOKYO), EthiopicChronology.getInstance(TOKYO));
@@ -120,14 +124,14 @@ public class TestEthiopicChronology extends TestCase {
         assertSame(EthiopicChronology.getInstanceUTC(), EthiopicChronology.getInstanceUTC());
         assertSame(EthiopicChronology.getInstance(), EthiopicChronology.getInstance(LONDON));
     }
-
+    
     public void testWithUTC() {
         assertSame(EthiopicChronology.getInstanceUTC(), EthiopicChronology.getInstance(LONDON).withUTC());
         assertSame(EthiopicChronology.getInstanceUTC(), EthiopicChronology.getInstance(TOKYO).withUTC());
         assertSame(EthiopicChronology.getInstanceUTC(), EthiopicChronology.getInstanceUTC().withUTC());
         assertSame(EthiopicChronology.getInstanceUTC(), EthiopicChronology.getInstance().withUTC());
     }
-
+    
     public void testWithZone() {
         assertSame(EthiopicChronology.getInstance(TOKYO), EthiopicChronology.getInstance(TOKYO).withZone(TOKYO));
         assertSame(EthiopicChronology.getInstance(LONDON), EthiopicChronology.getInstance(TOKYO).withZone(LONDON));
@@ -136,14 +140,14 @@ public class TestEthiopicChronology extends TestCase {
         assertSame(EthiopicChronology.getInstance(PARIS), EthiopicChronology.getInstance().withZone(PARIS));
         assertSame(EthiopicChronology.getInstance(PARIS), EthiopicChronology.getInstanceUTC().withZone(PARIS));
     }
-
+    
     public void testToString() {
         assertEquals("EthiopicChronology[Europe/London]", EthiopicChronology.getInstance(LONDON).toString());
         assertEquals("EthiopicChronology[Asia/Tokyo]", EthiopicChronology.getInstance(TOKYO).toString());
         assertEquals("EthiopicChronology[Europe/London]", EthiopicChronology.getInstance().toString());
         assertEquals("EthiopicChronology[UTC]", EthiopicChronology.getInstanceUTC().toString());
     }
-
+    
     //-----------------------------------------------------------------------
     public void testDurationFields() {
         final EthiopicChronology ethiopic = EthiopicChronology.getInstance();
@@ -212,7 +216,7 @@ public class TestEthiopicChronology extends TestCase {
         assertEquals(true, ethiopicGMT.seconds().isPrecise());
         assertEquals(true, ethiopicGMT.millis().isPrecise());
     }
-
+    
     public void testDateFields() {
         final EthiopicChronology ethiopic = EthiopicChronology.getInstance();
         assertEquals("era", ethiopic.era().getName());
@@ -267,7 +271,7 @@ public class TestEthiopicChronology extends TestCase {
         assertEquals(ethiopic.months(), ethiopic.dayOfMonth().getRangeDurationField());
         assertEquals(ethiopic.weeks(), ethiopic.dayOfWeek().getRangeDurationField());
     }
-
+    
     public void testTimeFields() {
         final EthiopicChronology ethiopic = EthiopicChronology.getInstance();
         assertEquals("halfdayOfDay", ethiopic.halfdayOfDay().getName());
@@ -294,13 +298,13 @@ public class TestEthiopicChronology extends TestCase {
         assertEquals(true, ethiopic.millisOfDay().isSupported());
         assertEquals(true, ethiopic.millisOfSecond().isSupported());
     }
-
+    
     //-----------------------------------------------------------------------
     public void testEpoch() {
         DateTime epoch = new DateTime(1, 1, 1, 0, 0, 0, 0, ETHIOPIC_UTC);
         assertEquals(new DateTime(8, 8, 29, 0, 0, 0, 0, JULIAN_UTC), epoch.withChronology(JULIAN_UTC));
     }
-
+    
     public void testEra() {
         assertEquals(1, EthiopicChronology.EE);
         try {
@@ -308,7 +312,7 @@ public class TestEthiopicChronology extends TestCase {
             fail();
         } catch (IllegalArgumentException ex) {}
     }
-
+    
     //-----------------------------------------------------------------------
     /**
      * Tests era, year, monthOfYear, dayOfMonth and dayOfWeek.
@@ -396,9 +400,17 @@ public class TestEthiopicChronology extends TestCase {
             millis += SKIP;
         }
     }
-
+    
     public void testSampleDate() {
         DateTime dt = new DateTime(2004, 6, 9, 0, 0, 0, 0, ISO_UTC).withChronology(ETHIOPIC_UTC);
+        
+        /**
+         * My test for the issue I am working on.
+         *
+         */
+        assertEquals("Sane 02, 1996", dt.toString(DateTimeFormat.forPattern("MMM dd, yyyy")));
+        
+        
         assertEquals(EthiopicChronology.EE, dt.getEra());
         assertEquals(20, dt.getCenturyOfEra());  // TODO confirm
         assertEquals(96, dt.getYearOfCentury());
@@ -461,7 +473,7 @@ public class TestEthiopicChronology extends TestCase {
         assertEquals(0, dt.getSecondOfMinute());
         assertEquals(0, dt.getMillisOfSecond());
     }
-
+    
     public void testSampleDateWithZone() {
         DateTime dt = new DateTime(2004, 6, 9, 12, 0, 0, 0, PARIS).withChronology(ETHIOPIC_UTC);
         assertEquals(EthiopicChronology.EE, dt.getEra());
@@ -474,7 +486,7 @@ public class TestEthiopicChronology extends TestCase {
         assertEquals(0, dt.getSecondOfMinute());
         assertEquals(0, dt.getMillisOfSecond());
     }
-
+    
     public void testDurationYear() {
         // Leap 1999, NotLeap 1996,97,98
         DateTime dt96 = new DateTime(1996, 10, 2, 0, 0, 0, 0, ETHIOPIC_UTC);
@@ -526,7 +538,7 @@ public class TestEthiopicChronology extends TestCase {
         assertEquals(dt99.getMillis(), fld.add(dt96.getMillis(), 3L));
         assertEquals(dt00.getMillis(), fld.add(dt96.getMillis(), 4L));
     }
-
+    
     public void testDurationMonth() {
         // Leap 1999, NotLeap 1996,97,98
         DateTime dt11 = new DateTime(1999, 11, 2, 0, 0, 0, 0, ETHIOPIC_UTC);
@@ -575,7 +587,7 @@ public class TestEthiopicChronology extends TestCase {
         assertEquals(dt13.getMillis(), fld.add(dt11.getMillis(), 2L));
         assertEquals(dt01.getMillis(), fld.add(dt11.getMillis(), 3L));
     }
-
+    
     public void testLeap_5_13() {
         Chronology chrono = EthiopicChronology.getInstance();
         DateTime dt = new DateTime(3, 13, 5, 0, 0, chrono);
@@ -584,7 +596,7 @@ public class TestEthiopicChronology extends TestCase {
         assertEquals(false, dt.dayOfMonth().isLeap());
         assertEquals(false, dt.dayOfYear().isLeap());
     }
-
+    
     public void testLeap_6_13() {
         Chronology chrono = EthiopicChronology.getInstance();
         DateTime dt = new DateTime(3, 13, 6, 0, 0, chrono);
@@ -593,5 +605,5 @@ public class TestEthiopicChronology extends TestCase {
         assertEquals(true, dt.dayOfMonth().isLeap());
         assertEquals(true, dt.dayOfYear().isLeap());
     }
-
+    
 }
